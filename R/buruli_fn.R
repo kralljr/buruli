@@ -47,7 +47,7 @@ get_sig <- function(y, wt, sig = 0.05) {
     sglm1 <- summary(glm1)$coef[-1, 4]
     
     out <- 0
-    if(sglm1[1] < sig / 2 | sglm[2] < sig / 2) {
+    if(sglm1[1] < sig / 2 | sglm1[2] < sig / 2) {
         out <- 1
     }
     
