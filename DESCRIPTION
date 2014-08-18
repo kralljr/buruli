@@ -3,6 +3,7 @@ Title: Functions for seasonal power exploration
 Version: 0.1
 Authors: Jenna Krall <jenna.krall@gmail.com>
 Description: So far, simple power simulations for seasonal data
-Depends: R (>= 3.1.1)
+Depends:
+    R (>= 3.1.1)
 License: What license is it under?
 LazyData: true
