@@ -3,7 +3,7 @@
 \alias{get_power}
 \title{Seasonal power}
 \usage{
-get_power(N, a, w, P, t, sd1 = 1, sig = 0.05)
+get_power(N, a, w, P, t, sd = 1, sig = 0.05, max1 = 0)
 }
 \arguments{
 \item{N}{Number of simulations}
@@ -19,6 +19,8 @@ get_power(N, a, w, P, t, sd1 = 1, sig = 0.05)
 \item{sd}{standard deviation of random error}
 
 \item{sig}{significance level (defaults to 0.05)}
+
+\item{max1}{Maximum number of days delayed}
 }
 \description{
 \code{get_power} Obtains power for seasonal associations using cosignor (Barnett and Dobson 2010)
