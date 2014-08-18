@@ -9,6 +9,7 @@
 #' @param t time
 #' @param sd standard deviation of random error
 #' @param sig significance level (defaults to 0.05)
+#' @param max1 Maximum number of days delayed
 #' @export
 #' @examples
 #' N <- 100
@@ -17,7 +18,7 @@
 #' P <- 0
 #' t <- seq(1, 365 * 2, by = 1)
 #' get_power(100, a, w, P, t)
-get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05) {
+get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05, max1 = 0) {
     
     #get wt
     t1 <- t * (t <= 365) + (t - 365) * (t > 365)
@@ -27,7 +28,38 @@ get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05) {
     sig.out <- vector(, length = N)
     for(i in 1 : N) {
         #get y
-        y <- a * cos(wt) + 0 * sin(wt) + rnorm(length(wt), sd = sd)
+        mu <- (  10 + a * cos(wt) + 0 * sin(wt) + rnorm(length(wt), sd = sd)) #/ 10000
+        
+        #get true data
+        #y <- rbinom(length(mu), 10000, mu)
+        y <- rpois(length(mu), mu) 
+        
+        if(max1 > 0) {
+            #get individual data info
+            dates <- as.Date(t, origin = "1970-01-01")
+            ind <- as.Date("1970-01-01", origin = "1970-01-01")
+            for(j in 1 : length(y)) {
+                ind <- c(ind, rep(dates[j], y[j]))
+            }
+            ind <- ind[-1]
+            
+            
+            #add delay and get count/day
+            del <- sample(seq(0, max1), length(ind), replace = T)
+            ind <- ind + del
+            ind <- dplyr::filter(data.frame(ind), ind <= max(dates, na.rm = T))
+            td <- table(as.matrix(ind))
+            y <- td[order(as.Date(names(td), origin = "1970-01-01"))]
+            
+            #add in missing dates
+            dates <- data.frame(dates)
+            y <- data.frame(as.Date(names(y), origin = "1970-01-01"), y)
+            colnames(y) <- c("dates", "y")
+            y <- merge(y, dates, all.y = T)
+            y[is.na(y)] <- 0
+            y <- y$y
+        }
+
         sig.out[i] <- get_sig(y, wt, sig)
     }
     
@@ -44,7 +76,7 @@ get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05) {
 #' @param wt time in cycle
 #' @param sig significance level (defaults to 0.05)
 get_sig <- function(y, wt, sig = 0.05) {
-    glm1 <- glm(y ~ cos(wt) + sin(wt))
+    glm1 <- glm(y ~ cos(wt) + sin(wt), family= "poisson")
     sglm1 <- summary(glm1)$coef[-1, 4]
     
     out <- 0
