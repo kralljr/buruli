@@ -17,22 +17,23 @@
 #' P <- 0
 #' t <- seq(1, 365 * 2, by = 1)
 #' get_power(100, a, w, P, t)
-get_power <- function(N, a, w, P, t, sd1 = 1, sig = 0.05) {
-    
-    #get y
-    y <- a * cos(w * t - P) + rnorm(t, sd = sd1)
+get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05) {
     
     #get wt
     t1 <- t * (t <= 365) + (t - 365) * (t > 365)
     ft <- (t1 - 1)/365
     wt <- 2 * pi * ft
     
-    sig <- vector(, length = N)
+    sig.out <- vector(, length = N)
     for(i in 1 : N) {
-        sig[i] <- get_sig(y, wt, sig)
+        #get y
+        y <- a * cos(wt) + 0 * sin(wt) + rnorm(length(wt), sd = sd)
+        sig.out[i] <- get_sig(y, wt, sig)
     }
     
-    return(mean(sig, na.rm = T))
+    out <- mean(sig.out, na.rm = T)
+    out
+    return(out)
 }
 
 #' Seasonal power
