@@ -37,6 +37,16 @@ get_power <- function(N, a, w, P, t, sd = 1, sig = 0.05, max1 = 0) {
         if(max1 > 0) {
             #get individual data info
             dates <- as.Date(t, origin = "1970-01-01")
+            
+#             y2 <- rep(0, length(y))
+#             for(j in 1 : length(y)) {
+#                 del <- sample(seq(0, max1), length(y[j]), replace = T)
+#                 y2[] <- y2[] + del
+#                 for(k in 1 : y[j]) {
+#                     
+#                 }
+#             }
+#             
             ind <- as.Date("1970-01-01", origin = "1970-01-01")
             for(j in 1 : length(y)) {
                 ind <- c(ind, rep(dates[j], y[j]))
